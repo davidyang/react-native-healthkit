@@ -5,6 +5,7 @@ import Healthkit, {
   HKStatisticsOptions,
   HKWorkoutActivityType,
   HKCategoryTypeIdentifier,
+  HKUnits,
   useMostRecentQuantitySample,
   useStatisticsForQuantity,
   useSources,
@@ -14,6 +15,8 @@ import Healthkit, {
   deleteSamples,
   queryHeartbeatSeriesSamplesWithAnchor,
   queryQuantitySamplesWithAnchor,
+  queryStatisticsForQuantity,
+  queryStatisticsCollectionForQuantity,
   saveQuantitySample,
   saveWorkoutRoute,
   saveWorkoutSample,
@@ -644,6 +647,22 @@ const App = () => {
   ) : (
     <Provider>
       <ScrollView style={styles.scrollView}>
+        <Button onPress={async () => {
+          let oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+          const res = await queryStatisticsCollectionForQuantity(
+            HKQuantityTypeIdentifier.stepCount,
+            [HKStatisticsOptions.cumulativeSum],
+            oneWeekAgo,
+            {day: 1},
+            HKUnits.Count);
+          alert(JSON.stringify(res));
+
+        }}>
+          Step Count Statistics Collection
+        </Button>
+
         <Button onPress={async () => {
           const res = await queryQuantitySamplesWithAnchor(HKQuantityTypeIdentifier.stepCount, {
             limit: 2,
